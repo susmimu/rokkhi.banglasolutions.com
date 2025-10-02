@@ -1,0 +1,244 @@
+//------------------------------------------------------------------------------------
+$(document).ready(function()
+{
+    let acf = 1;
+
+    function reloadif()
+    {
+        //------------------------------------------------------------------------------------
+        let dev_hid;
+        let gps_insert_time, gps_no_of_satellite, gps_lat, gps_lon, gps_speed, gps_positioned_status, gps_course_decimal_val, gps_mcc, gps_mnc, gps_lac, gps_cell_id, gps_acc;
+        let hb_insert_time, hb_defence, hb_acc, hb_charge, hb_gps_tracking, hb_built_in_bat_level, hb_gsm_signal_strength;
+
+        dev_hid = $("#dev_hid").text();
+        //------------------------------------------------------------------------------------
+        // console.log('acf:', acf);
+        // console.log('dev_hid:', dev_hid);
+        //------------------------------------------------------------------------------------
+        $.ajax({
+            url: "{% url 'live_tracking_ajax' %}",
+            type: 'GET',
+            data: {
+                "dev_hid": dev_hid,
+            },
+            success: function(response)
+            {
+                //------------------------------------------------------------------------------------
+                let instance = JSON.parse(response["server_resp"]);
+                console.log('instance:', instance);
+                //------------------------------------------------------------------------------------
+                // Some complex parse example
+                // console.log('instance[0]:', instance[0]);
+                // console.log('instance[0].fields:', instance[0].fields);
+                // console.log('instance[0].fields.lat:', instance[0].fields.lat);
+                // console.log('instance[0].fields.lon:', instance[0].fields.lon);
+                //------------------------------------------------------------------------------------
+                // lat = instance[0].fields.lat;
+                // lon = instance[0].fields.lon;
+                //------------------------------------------------------------------------------------
+
+                //------------------------------------------------------------------------------------
+                // Parse data from server
+                gps_insert_time = instance.gps_insert_time;
+                gps_no_of_satellite = instance.gps_no_of_satellite;
+                gps_lat = instance.gps_lat;
+                gps_lon = instance.gps_lon;
+                gps_speed = instance.gps_speed;
+                gps_positioned_status = instance.gps_positioned_status;
+                gps_course_decimal_val = instance.gps_course_decimal_val;
+                gps_mcc = instance.gps_mcc;
+                gps_mnc = instance.gps_mnc;
+                gps_lac = instance.gps_lac;
+                gps_cell_id = instance.gps_cell_id;
+                gps_acc = instance.gps_acc;
+                //------------------------------------------------------------------------------------
+                hb_insert_time = instance.hb_insert_time;
+                hb_defence = instance.hb_defence;
+                hb_acc = instance.hb_acc;
+                hb_charge = instance.hb_charge;
+                hb_gps_tracking = instance.hb_gps_tracking;
+                hb_built_in_bat_level = instance.hb_built_in_bat_level;
+                hb_gsm_signal_strength = instance.hb_gsm_signal_strength;
+                //------------------------------------------------------------------------------------
+                let _if;
+
+                if (acf === 1) {
+                    _if = $("#if1");
+                    _if.attr("src", "https://maps.google.com/maps?q=" + gps_lat + "," + gps_lon + "&t=&z=17&ie=UTF8&iwloc=&output=embed");
+                }
+                else if (acf === 2) {
+                    _if = $("#if2");
+                    _if.attr("src", "https://maps.google.com/maps?q=" + gps_lat + "," + gps_lon + "&t=&z=17&ie=UTF8&iwloc=&output=embed");
+                }
+                //------------------------------------------------------------------------------------
+                // This delay is necessary to prevent frame refresh behind
+                // THIS CODE NOT NECESSARY
+                // const date = Date.now();
+                // let currentDate = null;
+
+                // do {
+                    // currentDate = Date.now();
+                // }
+                // while(currentDate - date < 1500); // Delay Duration in ms
+                //------------------------------------------------------------------------------------
+                let df1;
+                let df2;
+
+                if (acf === 1) {
+                    df1 = $("#df1");
+                    df2 = $("#df2");
+
+                    df1.css({'z-index': '99'});
+                    df2.css({'z-index': '100'});
+                    acf = 2;
+                }
+                else if (acf === 2) {
+                    df1 = $("#df1");
+                    df2 = $("#df2");
+
+                    df1.css({'z-index': '100'});
+                    df2.css({'z-index': '99'});
+                    acf = 1;
+                }
+                //------------------------------------------------------------------------------------
+                // Update Info area data
+                // $('#hb_time').text(hb_time);
+                $("<span id='hb_insert_time'><i class='bi bi-heart-pulse-fill'></i> " + hb_insert_time + "</span>").replaceAll("#hb_insert_time");
+                // $('#insert_date_time').text(insert_date_time);
+                $("<span id='gps_insert_time'><i class='bi bi-geo-alt-fill'></i> " + gps_insert_time + "</span>").replaceAll("#gps_insert_time");
+                //------------------------------------------------------------------------------------
+                if(hb_acc === '0' || gps_acc === '0')
+                {
+                    $("<div id='gps_hb_acc' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Engine</h4> <span class='text-secondary'><i class='bi bi-lightbulb-off-fill'></i> OFF</span> </div>").replaceAll("#gps_hb_acc");
+                }
+                else if(hb_acc === '1' || gps_acc === '1')
+                {
+                    $("<div id='gps_hb_acc' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Engine</h4> <span class='text-danger'><i class='bi bi-lightbulb-fill'></i> ON</span> </div>").replaceAll("#gps_hb_acc");
+                }
+                else if(hb_acc === '?' || gps_acc === '?')
+                {
+                    $("<div id='gps_hb_acc' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Engine</h4> <span class='text-muted'><i class='bi bi-lightbulb-fill'></i> ??</span> </div>").replaceAll("#gps_hb_acc");
+                }
+                //------------------------------------------------------------------------------------
+                if(hb_acc === '0' || gps_acc === '0') gps_speed = '0';
+
+                if(gps_speed === '0')
+                {
+                    $("<div id='gps_speed' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Speed</h4> <span class='text-secondary'><i class='bi bi-speedometer'></i> 0 Kmh</span> </div>").replaceAll("#gps_speed");
+                }
+                else if(gps_speed === '?')
+                {
+                    $("<div id='gps_speed' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Speed</h4> <span class='text-muted'><i class='bi bi-speedometer'></i> ??</span> </div>").replaceAll("#gps_speed");
+                }
+                else
+                {
+                    $("<div id='gps_speed' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Speed</h4> <span class='text-primary'><i class='bi bi-speedometer'></i> " + gps_speed + " Kmh</span> </div>").replaceAll("#gps_speed");
+                }
+                //------------------------------------------------------------------------------------
+                if(hb_charge === '0')
+                {
+                    $("<div id='hb_charge' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Battery</h4> <span class='text-danger'><i class='bi bi-exclamation-triangle-fill'></i> Not Charging</span> </div>").replaceAll("#hb_charge");
+                }
+                else if(hb_charge === '1')
+                {
+                    $("<div id='hb_charge' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Battery</h4> <span class='text-success'><i class='bi bi-battery-charging'></i> Charging</span> </div>").replaceAll("#hb_charge");
+                }
+                //------------------------------------------------------------------------------------
+                if(hb_built_in_bat_level === '00')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-danger'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-battery'></i> Empty</span> </div>").replaceAll("#hb_built_in_bat_level");
+                }
+                else if(hb_built_in_bat_level === '01')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-warning'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-battery'></i> Extremely Low</span> </div>").replaceAll("#hb_built_in_bat_level");
+                }
+                else if(hb_built_in_bat_level === '02')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-warning'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-battery-half'></i> Very Low</span> </div>").replaceAll("#hb_built_in_bat_level");
+                }
+                else if(hb_built_in_bat_level === '03')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-info'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-battery-half'></i> Low</span> </div>").replaceAll("#hb_built_in_bat_level");
+                }
+                else if(hb_built_in_bat_level === '04')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-primary'><i class='bi bi-battery-half'></i> Medium</span> </div>").replaceAll("#hb_built_in_bat_level");
+                }
+                else if(hb_built_in_bat_level === '05')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-success'><i class='bi bi-battery-half'></i> High</span> </div>").replaceAll("#hb_built_in_bat_level");
+                }
+                else if(hb_built_in_bat_level === '06')
+                {
+                    $("<div id='hb_built_in_bat_level' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Level</h4> <span class='text-success'><i class='bi bi-battery-full'></i> Full</span> </div>").replaceAll("#built_in_bat_level");
+                }
+                //------------------------------------------------------------------------------------
+                if(hb_gsm_signal_strength === '00')
+                {
+                    $("<div id='hb_gsm_signal_strength' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Network</h4> <span class='text-danger'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-reception-0'></i> No Network</span> </div>").replaceAll("#hb_gsm_signal_strength");
+                }
+                else if(hb_gsm_signal_strength === '01')
+                {
+                    $("<div id='hb_gsm_signal_strength' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Network</h4> <span class='text-warning'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-reception-1'></i> Extremely Weak</span> </div>").replaceAll("#hb_gsm_signal_strength");
+                }
+                else if(hb_gsm_signal_strength === '02')
+                {
+                    $("<div id='hb_gsm_signal_strength' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Network</h4> <span class='text-warning'><i class='bi bi-reception-2'></i> Weak</span> </div>").replaceAll("#hb_gsm_signal_strength");
+                }
+                else if(hb_gsm_signal_strength === '03')
+                {
+                    $("<div id='hb_gsm_signal_strength' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Network</h4> <span class='text-primary'><i class='bi bi-reception-3'></i> Good</span> </div>").replaceAll("#hb_gsm_signal_strength");
+                }
+                else if(hb_gsm_signal_strength === '04')
+                {
+                    $("<div id='hb_gsm_signal_strength' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Network</h4> <span class='text-success'><i class='bi bi-reception-4'></i> Strong</span> </div>").replaceAll("#hb_gsm_signal_strength");
+                }
+                else if(hb_gsm_signal_strength === '?')
+                {
+                    $("<div id='hb_gsm_signal_strength' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>Network</h4> <span class='text-muted'><i class='bi bi-reception-4'></i> ??</span> </div>").replaceAll("#hb_gsm_signal_strength");
+                }
+                //------------------------------------------------------------------------------------
+                if(gps_positioned_status === '0')
+                {
+                    $("<div id='gps_positioned_status' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>GPS</h4> <span class='text-danger'><i class='bi bi-exclamation-triangle-fill'></i> <i class='bi bi-pin-map-fill'></i> No GPS</span> </div>").replaceAll("#gps_positioned_status");
+                }
+                else if(gps_positioned_status === '1')
+                {
+                    $("<div id='gps_positioned_status' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>GPS</h4> <span class='text-success'><i class='bi bi-pin-map-fill'></i> OK</span> </div>").replaceAll("#gps_positioned_status");
+                }
+                else if(gps_positioned_status === '?')
+                {
+                    $("<div id='gps_positioned_status' class='alert alert-secondary m-2 p-2' style='text-align: center;'> <h4 class='mt-0'>GPS</h4> <span class='text-muted'><i class='bi bi-pin-map-fill'></i> ??</span> </div>").replaceAll("#gps_positioned_status");
+                }
+                //------------------------------------------------------------------------------------
+                $('#gps_no_of_satellite').text(gps_no_of_satellite);
+                //------------------------------------------------------------------------------------
+
+                //------------------------------------------------------------------------------------
+                if(gps_acc === '0' || hb_acc === '0' || gps_acc === '?' || hb_acc === '?')
+                {
+                    $('#car_img_frame_init').attr('hidden', true);
+                    $('#car_img_frame_eng_off').attr('hidden', false);
+                    $('#car_img_frame_eng_on').attr('hidden', true);
+                }
+                else if(gps_acc === '1' && hb_acc === '1')
+                {
+                    $('#car_img_frame_init').attr('hidden', true);
+                    $('#car_img_frame_eng_off').attr('hidden', true);
+                    $('#car_img_frame_eng_on').attr('hidden', false);
+                }
+                //------------------------------------------------------------------------------------
+            },
+            error: function(response)
+            {
+                alert("Pls try again...");
+            }})
+        //------------------------------------------------------------------------------------
+    }
+    //------------------------------------------------------------------------------------
+    $(function ()
+    {
+        window.setInterval(reloadif, 5000);
+    });
+    //------------------------------------------------------------------------------------
+})

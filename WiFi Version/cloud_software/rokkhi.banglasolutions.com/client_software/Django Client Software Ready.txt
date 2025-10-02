@@ -1,0 +1,438 @@
+
+----------------------------------------------------------------------------
+User: just
+Pass: @T8f9mX92c2(499m
+
+
+sudo systemctl enable gunicorn_rokkhi_banglasolutions_com
+sudo systemctl start gunicorn_rokkhi_banglasolutions_com
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+
+sudo systemctl stop gunicorn_rokkhi_banglasolutions_com
+sudo systemctl disable gunicorn_rokkhi_banglasolutions_com
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+
+sudo systemctl restart gunicorn_rokkhi_banglasolutions_com
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+
+sudo systemctl daemon-reload
+sudo reboot
+----------------------------------------------------------------------------
+
+apt list --upgradable
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get dist-upgrade -y
+sudo apt autoremove -y
+sudo apt-get clean -y
+sudo apt-get autoclean -y
+sudo apt-get remove -y
+
+sudo apt install python3-pip -y
+pip3 install python-dateutil
+sudo pip3 install python-dateutil
+sudo apt-get install git -y
+
+python -m pip install Pillow
+
+Install virtual environment
+sudo apt-get install python3-venv -y
+--------------------------------------------
+
+
+-----------------------------------------------------------------
+Install and configure Django inside virtual environment
+-----------------------------------------------------------------
+User: just
+Pass: @T8f9mX92c2(499m
+
+
+cd /home/just/rokkhi.banglasolutions.com/client_software/
+python3 -m venv venv
+
+source /home/just/rokkhi.banglasolutions.com/client_software/venv/bin/activate
+pip install django
+pip install gunicorn
+pip install pillow
+pip install pytz
+pip install psycopg2
+pip install psycopg2-binary
+
+django-admin startproject proj_rokkhi_banglasolutions_com .
+django-admin startapp app_devices
+django-admin startapp app_users
+
+nano /home/just/rokkhi.banglasolutions.com/client_software/proj_rokkhi_banglasolutions_com/settings.py
+
+Modify as sample file
+
+
+cd /home/just/rokkhi.banglasolutions.com/client_software/
+source venv/bin/activate
+
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py createsuperuser
+
+You will have to select a username 
+I have used: rokkhi_is_admin
+and choose and confirm a password 
+I have used: @T8f9mX92c2#
+
+python3 manage.py collectstatic
+-----------------------------------------------------------------
+User: just
+Pass: @T8f9mX92c2(499m
+
+Test created Django Project
+
+* Disable firwall to open all ports Or allow port 8000 in firewall
+sudo ufw status
+sudo ufw disable
+sudo ufw status
+
+python manage.py runserver 0.0.0.0:8000 [Use it if u check from another PC]
+OR
+python manage.py runserver [Use it if u check from same PC]
+python manage.py runserver 192.168.1.101:8000
+You should see the default Django index page
+
+If Django set up as Global
+sudo python3 manage.py runserver 0.0.0.0:80
+
+See server IP from router. In your web browser type IP address followed by :8000:
+192.168.1.101:8000
+----------------------------------------------------------------------------
+
+
+============================================================================
+Testing Gunicorn’s Ability to Serve the Project
+============================================================================
+gunicorn --bind 0.0.0.0:8000 proj_rokkhi_banglasolutions_com.wsgi                    [We will use this name in .service file next]
+gunicorn --bind 192.168.1.101:8000 proj_rokkhi_banglasolutions_com.wsgi             [We will use this name in .service file next]
+TEST in browser
+You should see the same result as before
+
+Stop server 
+CTRL-C
+
+Deactivate the virtual environment
+deactivate
+----------------------------------------------------------------------------
+
+
+============================================================================
+Create .socket and .service files to start gunicorn on reboot
+============================================================================
+* Find any old file of gunicorn and delete all [if needed]
+sudo find /. -name "*gunicorn*"
+
+User: just
+Pass: @T8f9mX92c2(499m
+----------------------------------------------------------------------------
+sudo nano /etc/systemd/system/gunicorn_rokkhi_banglasolutions_com.socket
+
+# Contents start
+
+[Unit]
+Description=gunicorn_rokkhi_banglasolutions_com socket
+
+[Socket]
+ListenStream=/run/gunicorn_rokkhi_banglasolutions_com.sock
+
+[Install]
+WantedBy=sockets_gunicorn_rokkhi_banglasolutions_com.target
+
+# Contents end
+
+Copy Paste the contents
+CTRL+S
+CTRL+x 
+----------------------------------------------------------------------------
+sudo nano /etc/systemd/system/gunicorn_rokkhi_banglasolutions_com.service
+
+*** Note: This sections confused me every time, so I made this note
+WorkingDirectory=/home/hasan/rokkhi.banglasolutions.com/ #This is the path of the directory which contains manage.py file
+proj_rokkhi_banglasolutions_com.wsgi:application #This is the path which we test in STEP: Testing Gunicorn’s Ability to Serve the Project
+
+# Contents start
+
+[Unit]
+Description=gunicorn_rokkhi_banglasolutions_com daemon
+Requires=gunicorn_rokkhi_banglasolutions_com.socket
+After=network.target
+
+[Service]
+User=just
+Group=www-data
+WorkingDirectory=/home/just/rokkhi.banglasolutions.com/client_software/
+ExecStart=/home/just/rokkhi.banglasolutions.com/client_software/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn_rokkhi_banglasolutions_com.sock \
+          proj_rokkhi_banglasolutions_com.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+
+# Contents end
+
+Copy Paste the contents
+CTRL+S
+CTRL+x 
+----------------------------------------------------------------------------
+User: just
+Pass: @T8f9mX92c2(499m
+
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+sudo systemctl enable gunicorn_rokkhi_banglasolutions_com
+sudo systemctl start gunicorn_rokkhi_banglasolutions_com
+sudo systemctl restart gunicorn_rokkhi_banglasolutions_com
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+sudo systemctl daemon-reload
+sudo reboot
+
+* Now we have to confirm that the operation was successful by checking for the socket file
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com.socket
+
+Next, check for the existence of the gunicorn.sock file within the /run directory:
+file /run/gunicorn_rokkhi_banglasolutions_com.sock
+Output
+/run/gunicorn.sock: socket
+
+If the systemctl status command indicated that an error occurred or 
+if you do not find the gunicorn.sock file in the directory, it’s an indication that 
+the Gunicorn socket was not able to be created correctly. Check the Gunicorn socket’s logs by typing:
+
+sudo journalctl -u gunicorn_rokkhi_banglasolutions_com
+
+Take another look at your /etc/systemd/system/gunicorn_rokkhi_banglasolutions_com.socket 
+file to fix any problems before continuing.
+----------------------------------------------------------------------------
+User: just
+Pass: @T8f9mX92c2(499m
+* Testing Socket Activation
+
+Importnet commands:
+sudo systemctl daemon-reload
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+sudo systemctl stop gunicorn_rokkhi_banglasolutions_com
+sudo systemctl start gunicorn_rokkhi_banglasolutions_com
+sudo systemctl enable gunicorn_rokkhi_banglasolutions_com
+sudo systemctl stop gunicorn_rokkhi_banglasolutions_com
+sudo systemctl disable gunicorn_rokkhi_banglasolutions_com
+sudo systemctl restart gunicorn_rokkhi_banglasolutions_com
+
+Currently, if you’ve only started the gunicorn.socket unit, the gunicorn.service 
+will not be active yet since the socket has not yet received any connections. 
+You can check this by typing:
+
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+Output
+gunicorn.service - gunicorn daemon
+   Loaded: loaded (/etc/systemd/system/gunicorn.service; disabled; vendor preset: enabled)
+   Active: inactive (dead)
+----------------------------------------------------------------------------
+To test the socket activation mechanism, we can send a connection to the socket through curl by typing:
+sudo curl –unix-socket /run/gunicorn_rokkhi_banglasolutions_com.sock localhost
+
+You should see the HTML output from your application in the terminal. This indicates that Gunicorn 
+was started and was able to serve your Django application. You can verify that the Gunicorn service is running by typing:
+
+sudo systemctl status gunicorn_rokkhi_banglasolutions_com
+Output
+gunicorn.service - gunicorn daemon
+   Loaded: loaded (/etc/systemd/system/gunicorn.service; disabled; vendor preset: enabled)
+   Active: active (running) since Mon 2018-07-09 20:00:40 UTC; 4s ago
+ Main PID: 1157 (gunicorn)
+    Tasks: 4 (limit: 1153)
+………
+
+If the output from curl or the output of systemctl status indicates that a problem occurred, check the logs for additional details:
+sudo journalctl -u gunicorn_rokkhi_banglasolutions_com
+
+Check your /etc/systemd/system/gunicorn_rokkhi_banglasolutions_com.service file for problems.
+If you make changes to the /etc/systemd/system/gunicorn.service file, reload the daemon to reread the service definition and restart the Gunicorn process by typing:
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn_rokkhi_banglasolutions_com
+Make sure you troubleshoot the above issues before continuing.
+----------------------------------------------------------------------------
+
+
+============================================================================
+Install and Configure Nginx to Proxy Pass to Gunicorn
+User: just
+Pass: @T8f9mX92c2(499m
+============================================================================
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get dist-upgrade -y
+sudo apt-get install nginx -y
+sudo apt-get purge nginx nginx-common  (Removes everything)
+sudo apt-get autoremove
+rm -rf /etc/nginx
+sudo apt-get remove nginx-full nginx-common
+
+sudo systemctl status nginx
+sudo systemctl disable nginx
+sudo systemctl enable nginx
+sudo systemctl stop nginx
+sudo systemctl start nginx
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+sudo tail /var/log/nginx/error.log
+
+Command for Stopping, Starting, and Reloading Nginx
+To stop your already-running Nginx server:
+sudo systemctl stop nginx
+
+Once the server has been stopped, you can start it again by typing:
+sudo systemctl start nginx
+
+To stop and then start Nginx again, type:
+sudo systemctl restart nginx
+
+You also have the ability to reload Nginx without disrupting connections:
+sudo systemctl reload nginx
+
+To learn more about systemd and the systemctl command, 
+check out this introduction to systemd essentials.
+
+Now that Gunicorn is set up, we need to configure Nginx to pass traffic to the process.
+Start by creating and opening a new server block in Nginx’s sites-available directory:
+
+sudo nano /etc/nginx/sites-available/rokkhi.banglasolutions.com
+
+----------------------------------------------------------------------------
+server {
+    server_name rokkhi.banglasolutions.com;
+	
+    location = /favicon.ico { access_log off; log_not_found off; }
+	
+	location /static/ {
+	    autoindex on;
+        root /home/just/rokkhi.banglasolutions.com/client_software/;
+    }
+	
+	location /media/ {
+         autoindex on;
+         root /home/just/rokkhi.banglasolutions.com/client_software/;
+    }
+	
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn_rokkhi_banglasolutions_com.sock;
+    }
+}
+
+
+
+----------------------------------------------------------------------------
+
+Inside, open up a new server block. We will start by specifying that 
+this block should listen on the normal port 80 and that it should 
+respond to our server’s domain name or IP address:
+
+See the given 'rokkhi_banglasolutions_com' example file
+Copy Paste and Edit the contents of settings file like example file
+Save and close the file when you are finished.
+Control + x
+y
+ENTER
+
+Now, we can enable the file by linking it to the sites-enabled directory:
+sudo ln -s /etc/nginx/sites-available/rokkhi.banglasolutions.com /etc/nginx/sites-enabled
+
+Test your Nginx configuration for syntax errors by typing:
+sudo nginx -t
+
+If no errors are reported, go ahead and restart Nginx by typing:
+sudo systemctl restart nginx
+
+sudo reboot now
+----------------------------------------------------------------------------
+Go to browser and type server ip address http://192.168.1.101/, hit enter
+
+YES! you should see the Django index page!
+
+
+IMPORTANT!!!!!!!!!!!!!!
+gunicorn loading static and media file properly but not Nginx
+
+01. See the error log
+sudo tail /var/log/nginx/error.log
+if it return 
+"failed (13: Permission denied)"
+
+It means Nginx user has no permission
+
+See the nginx user name by (It may be "www-data")
+sudo nano /etc/nginx/nginx.conf
+
+Now add this user to your current user group (just)
+sudo gpasswd -a www-data just
+sudo service nginx restart
+
+SOLVED!
+----------------------------------------------------------------------------
+
+
+
+
+Config Firewall (At the End):
+=============================
+User: just
+Pass: @T8f9mX92c2(499m
+
+sudo ufw status
+sudo ufw app list
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+sudo ufw status
+sudo ufw disable
+Type “y” and press ENTER to proceed. You can see that SSH connections are still allowed by typing:
+sudo ufw status
+
+sudo ufw allow 4231
+sudo ufw allow 9473
+
+sudo reboot
+
+You should get a listing of the application profiles:
+Available applications:
+Nginx Full
+Nginx HTTP
+Nginx HTTPS
+OpenSSH
+
+*** We need to make sure that the firewall allows SSH connections 
+so that we can log back in next time. Otherwise SSH will be blocked. 
+We can allow these connections by typing:
+
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+
+Afterwards, we can enable the firewall by typing:
+sudo ufw enable
+Type y and press ENTER to proceed. 
+
+sudo ufw status
+
+*** As the firewall is currently blocking all connections except for SSH, 
+if you install and configure additional services, you will need to adjust the firewall 
+settings to allow traffic in. You can learn some common UFW operations in our UFW Essentials guide. 
+To enhance your server’s security, we strongly recommend setting up SSH keys instead of using password 
+authentication.
+
+Configure ufw:
+sudo ufw app list
+sudo ufw status
+sudo ufw allow 'Nginx Full'
+sudo ufw delete allow 8000
+sudo ufw delete allow 'Nginx HTTP
+sudo ufw delete allow 80
+sudo ufw status
+
+sudo ufw allow 7867
+----------------------------------------------------------------------------
+

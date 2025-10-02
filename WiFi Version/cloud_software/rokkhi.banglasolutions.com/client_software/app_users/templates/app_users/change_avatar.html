@@ -1,0 +1,42 @@
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% extends 'app_users/base.html' %}
+{% load static %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% block middle_body %}
+    <div class="w-100 p-2">
+        <div class="d-flex flex-row justify-content-center nowrap">
+            <div class="p-2 bg-white shadow-sm p-5">
+                <p class="border-bottom mb-4" style="font-family: Raleway; font-size: large; text-align: center;">Change Avatar</p>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <form method="POST" name="avatar_form" enctype="multipart/form-data" action={% url 'change_my_photo' %}>
+                    {% csrf_token %}
+                    <!-- ----------------------------------------------------------------------------------------------- -->
+                    <div class="my-2">
+                        <label for="formFile" class="form-label">Select your photo</label>
+                        <input required class="form-control" type="file" id="id_avatar_form" name="{{ avatar_form.avatar.name }}">
+                    </div>
+
+                    <small>* File size 500KB max</small>
+                    <br>
+                    <small>* File type .jpg, .jpeg, .png</small>
+                    <!-- ----------------------------------------------------------------------------------------------- -->
+
+                    <!-- ----------------------------------------------------------------------------------------------- -->
+                    <div class="d-grid gap-2 mb-2 mt-3">
+                        <button class="btn btn-success" type="submit">Upload Photo</button>
+                    </div>
+                    <!-- ----------------------------------------------------------------------------------------------- -->
+                    <div class="form-floating mb-0">
+                        <p class="ext-muted small mt-3">Back to home? <span class="text-danger"><a href="{% url 'user_dashboard' %}" style="text-decoration: none;">Cancel</a></span></p>
+                    </div>
+                    <!-- ----------------------------------------------------------------------------------------------- -->
+                </form>
+                <!-- ----------------------------------------------------------------------------------------------- -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->

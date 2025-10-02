@@ -1,0 +1,10 @@
+{
+  "ssid": "ZerOneLab", "password": "zerone333",
+  "cloud_domain": "rokkhi.banglasolutions.com", "cloud_ip": "103.159.2.41", "cloud_port": 6237,
+  "device_sl": "000000",
+  "hb_delay": 9,
+  "motion_capture_active": 0, "motion_capture_flash": 0, "no_of_frame_capture_limit": 99, "vdo_frame_size": 7,
+  "cam_flip": 1, "cam_mirror": 1,
+  "light_alarm_status": 0,
+  "dev_reboot_cnt": 0
+}

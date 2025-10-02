@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Rokkhi</title>
+		<style>
+			body
+			{
+				color: white;
+				background-color: #157819;
+			}
+
+			.center-box
+			{
+				width: auto;
+				height: auto;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 5px;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+		  </style>
+	</head>
+
+	<body>
+		<h4 style="text-align: start; margin-top: 30px;">Available WiFi:</h3>
+		

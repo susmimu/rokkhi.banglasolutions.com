@@ -1,0 +1,15 @@
+
+		<div class="center-box">
+			<form action="/save">
+				<h3 style="text-align: center; margin-top: 15px; margin-bottom: 10px;">Enter WiFi Details</h3>
+				<hr>
+				WiFi Name: <input type="text" name="ssid" required><br>
+				Password: <input style="margin-left:14px; margin-top:3px;" type="text" name="password" required><br>
+
+				<h6 style="text-align: end; padding: 0; margin-top: 10px; margin-bottom: 10px;">
+					<input style="padding: 5px;" type="submit" value="Save & Connect">
+				</h6>
+			</form>
+		</div>
+	</body>
+</html>

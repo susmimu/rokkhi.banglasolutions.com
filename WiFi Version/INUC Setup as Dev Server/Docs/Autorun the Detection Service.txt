@@ -1,0 +1,178 @@
+IP: 103.159.2.41
+User: just
+Pass: @T8f9mX92c2(499m
+
+==============================================
+Create launcher script
+==============================================
+cd /home/just/rokkhi.banglasolutions.com/image_receiver/
+
+Create the bash script:
+sudo nano launcher_detection.sh
+
+Copy paste the bellow contents SKIP (Upper and lower #------  ... lines)
+#-------------------------------------------- Contents Start
+
+#!/bin/bash
+
+cd /home/just/rokkhi.banglasolutions.com/image_receiver/
+
+/home/just/rokkhi.banglasolutions.com/image_receiver/yolo-env/bin/python3 motion_and_person_detection.py
+
+
+#-------------------------------------------- Contents End
+
+Save and Exit (Ctrl+s, Ctrl+x)
+
+Make It Executable
+sudo chmod 755 launcher_detection.sh
+OR
+sudo chmod u+x
+
+Now test it, by typing in:
+
+sh launcher_detection.sh
+
+Ctrl+c to quit
+#--------------------------------------------
+
+
+==============================================
+Create the Service
+==============================================
+* Create a new .service file in the systemd directory [If directory not exists create it]
+
+sudo mkdir /usr/lib/systemd/system
+sudo nano /usr/lib/systemd/system/serv_detection.service
+
+Copy paste the bellow contents SKIP (Upper and lower #------  ... lines)
+#-------------------------------------------- Contents Start
+
+[Unit]
+Description=serv_detection service
+
+[Service]
+ExecStart=/home/just/rokkhi.banglasolutions.com/image_receiver/launcher_detection.sh
+Restart=always
+RestartSec=33s
+KillMode=process
+TimeoutSec=infinity
+RemainAfterExit=no
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+
+#-------------------------------------------- Contents End
+
+Save and Exit (Ctrl+s, Ctrl+x)
+
+* We need to tell systemd to recognize our service, so enter
+sudo systemctl daemon-reload
+
+* We then need to tell systemd that we want our service to start on boot, so enter.
+[Necessary commands]
+User: just
+Pass: @T8f9mX92c2(499m
+
+sudo systemctl enable serv_detection.service
+sudo systemctl start serv_detection.service
+sudo systemctl status serv_detection.service
+
+sudo systemctl stop serv_detection.service
+sudo systemctl disable serv_detection.service
+sudo systemctl status serv_detection.service
+sudo systemctl restart serv_detection.service
+
+* Reboot with 
+sudo reboot
+
+
+
+
+
+A MORE DETAILED EXAMPLE
+===========================
+2 Answers
+
+194
+
+Your .service file should look like this:
+
+[Unit]
+Description=Spark service
+
+[Service]
+ExecStart=/path/to/spark/sbin/start-all.sh
+
+[Install]
+WantedBy=multi-user.target
+Now, take a few more steps to enable and use the .service file:
+
+Place it in /etc/systemd/system folder with say a name of myfirst.service
+
+Make sure that your script executable with:
+
+chmod u+x /path/to/spark/sbin/start-all.sh
+Start it:
+
+sudo systemctl start myfirst
+Enable it to run at boot:
+
+sudo systemctl enable myfirst
+Stop it:
+
+sudo systemctl stop myfirst
+Notes
+You don't need to launch Spark with sudo in your service, as the default service user is already root.
+
+Look at the links below for more systemd options.
+
+Moreover
+Now what we have above is just rudimentary, here is a complete setup for spark:
+
+[Unit]
+Description=Apache Spark Master and Slave Servers
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+User=spark
+Type=forking
+ExecStart=/opt/spark-1.6.1-bin-hadoop2.6/sbin/start-all.sh
+ExecStop=/opt/spark-1.6.1-bin-hadoop2.6/sbin/stop-all.sh
+TimeoutSec=30
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=350
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target
+To setup the service:
+
+sudo systemctl start spark.service
+sudo systemctl stop spark.service
+sudo systemctl enable spark.service
+Further reading
+Please read through the following links. Spark is a complex setup, so you should understand how it integrates with Ubuntu's init service.
+
+
+
+User: just
+Pass: @T8f9mX92c2(499m
+
+cd /home/just/rokkhi.banglasolutions.com/image_receiver/
+source yolo-env/bin/activate
+python3 main.py
+
+
+
+
+pip install --upgrade pip
+
+source yolo-env/bin/activate
+pip install ultralytics --upgrade
+
+

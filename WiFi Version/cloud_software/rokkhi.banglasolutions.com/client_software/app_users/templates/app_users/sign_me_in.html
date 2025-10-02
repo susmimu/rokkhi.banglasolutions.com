@@ -1,0 +1,50 @@
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% extends 'app_users/base.html' %}
+{% load static %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% block sign_up_in_contents %}
+    <div class="d-flex flex-row flex-wrap justify-content-center align-items-center">
+        <div class="container bg-white p-5 mt-5 rounded-3 shadow-sm" style="max-width: 550px;">
+            <form method="POST" action={% url 'sign_me_in' %}>
+                {% csrf_token %}
+                <!-- ----------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3 border-bottom">
+                    <h5 class="text-muted text-center"><b>LOGIN</b></h5>
+                </div>
+                <!-- ----------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3">
+                    {{ sign_me_in_form.username }}
+                    <label for="id_username">Mobile no</label>
+                    <p class="p-0 m-0 text-muted"><small>* Registered mobile number</small></p>
+                </div>
+                <!-- ----------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3">
+                    {{ sign_me_in_form.password }}
+                    <label for="id_password1">Password</label>
+                    <p class="p-0 m-0 text-muted"><small>Forgot password? <a href="{% url 'forgot_password' %}" class="w3-text-blue" style="text-decoration: none;">Recover your password</a></small></p>
+                </div>
+                <!-- ----------------------------------------------------------------------------------------------- -->
+                <div class="form-floating my-4">
+                    <div class="d-grid gap-2 mx-auto">
+                        <button type="submit" class="btn btn-success btn-lg btn-block rounded-3">Login</button>
+                    </div>
+                </div>
+                <!-- ----------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-0">
+                    <span class="text-muted small">Don't have an account? <a href="{% url 'sign_me_up' %}" class="w3-text-green" style="text-decoration: none;"><b>Signup</b></a></span>
+                    <span class="text-muted small">Back to home? <a href="/" class="w3-text-red" style="text-decoration: none;"><b>Cancel</b></a></span>
+                </div>
+                <!-- ----------------------------------------------------------------------------------------------- -->
+            </form>
+        </div>
+    </div>
+{% endblock %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+<div class="form-group d-flex">
+    <div class="forgot-pass mr-0">
+        <a href="{% url 'reset_password_email' %}" id="js--forgot-password" class="btn btn-link pr-0 pt-0">Forgot Password?</a>
+    </div>
+</div>

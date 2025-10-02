@@ -1,0 +1,31 @@
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% extends 'proj_ee_zeronesolution_com/base.html' %}
+{% load static %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% block middle_body %}
+    <div class="w-100 container-fluid">
+        <div class="d-flex flex-row justify-content-center nowrap">
+{#            <div class="p-2" style='background-image: url("{% static 'static_images/zos_logo.png' %}"); height: 100%; background-position: center; background-repeat: no-repeat; background-size: cover;'>#}
+            <div class="" style=''>
+                <p class="text-warning" style="font-family: Raleway; font-size: large; text-align: center;">Login to Continue</p>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <form method="POST" action="{% url 'sign_me_in' %}">
+                    {% csrf_token %}
+
+                    {{ login_form.username }}
+                    {{ login_form.password }}
+
+                    <div class="d-grid gap-2 mb-2 mt-4">
+                        <button class="btn btn-warning" type="submit">Login</button>
+                    </div>
+                </form>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <p class="small mt-3"><span class="text-info">Problem?</span> <span class="text-light">Contact to: 01813944449</span></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->

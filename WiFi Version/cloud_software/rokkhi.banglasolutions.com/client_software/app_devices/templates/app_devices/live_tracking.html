@@ -1,0 +1,199 @@
+{% extends 'app_devices/base.html' %}
+{% load static %}
+
+
+<!-- Middle Body ------------------------------------------------------------------------------------------------------- -->
+{% block middle_body %}
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <div class="bg-danger" style="width: 100%; height: 1%; position: absolute; top: 0;"></div>
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <div id="df1" class="" style="width: 100%; height: 80%; z-index: 99; position: absolute; top: 1%;">
+        <iframe id="if1" class="" style="width: 100%; height: 100%; position: absolute; top: 0;" src="https://maps.google.com/maps?q={{ gps_lat }},{{ gps_lon }}&t=&z=17&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+    </div>
+
+    <div id="df2" class="" style="width: 100%; height: 80%; z-index: 100; position: absolute; top: 1%;">
+        <iframe id="if2" class="" style="width: 100%; height: 100%; position: absolute; top: 0;" src="https://maps.google.com/maps?q={{ gps_lat }},{{ gps_lon }}&t=&z=17&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+    </div>
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <div class="bg-success" style="height: 1%; width: 100%; position: absolute; top: 81%;"></div>
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <div id="frame_overlay" class="" style="width: 100%; height: 80%; z-index: 111; position: absolute; top: 1%;">
+        <div class="row container-fluid p-0 m-0" style="width: 100%; height: 100%; position: absolute; top: 0; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center;">
+            <div class="bg-secondary container-fluid rounded" style="width: fit-content; height: fit-content; position: relative; margin-top: -165px;">
+                <h6 class="mt-2 p-0 text-light" style="text-align: center;">{{ vehicle_name }}</h6>
+            </div>
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <div class="row container-fluid p-0 m-0" style="width: 100%; height: 100%; position: absolute; top: 0; display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center;">
+            <div class="bg-transparent container-fluid" style="width: 46px; height: 126px; position: relative;">
+                <a id="car_img_frame_init" href="https://maps.google.com/maps?q={{ gps_lat }},{{ gps_lon }}" target="_blank">
+                    {% if hb_acc == '0' or hb_acc == 0 or hb_acc == '?' %}
+                        <div class="bg-transparent" style="width: 46px; height: 66px; position: absolute; top: 0; left: 0; background-image: url('{% static 'static_images/car_eng_off.png' %}'); background-repeat: no-repeat; opacity: 98%;"></div>
+                    {% elif hb_acc == '1' or hb_acc == 1 %}
+                        <div class="bg-transparent" style="width: 46px; height: 66px; position: absolute; top: 0; left: 0; background-image: url('{% static 'static_images/car_safe_speed.png' %}'); background-repeat: no-repeat; opacity: 98%;"></div>
+                    {% endif %}
+                </a>
+
+                <a id="car_img_frame_eng_off" hidden href="https://maps.google.com/maps?q={{ gps_lat }},{{ gps_lon }}" target="_blank">
+                    <div class="bg-transparent" style="width: 46px; height: 66px; position: absolute; top: 0; left: 0; background-image: url('{% static 'static_images/car_eng_off.png' %}'); background-repeat: no-repeat; opacity: 98%;"></div>
+                </a>
+
+                <a id="car_img_frame_eng_on" hidden href="https://maps.google.com/maps?q={{ gps_lat }},{{ gps_lon }}" target="_blank">
+                    <div class="bg-transparent" style="width: 46px; height: 66px; position: absolute; top: 0; left: 0; background-image: url('{% static 'static_images/car_safe_speed.png' %}'); background-repeat: no-repeat; opacity: 98%;"></div>
+                </a>
+            </div>
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <div id="frame_zoom" class="bg-warning rounded btn-group-vertical" role="group" style="width: 45px; height: 85px; position: absolute; bottom: 22px; right: 8px;">
+            <button type="button" id="z_plus" class="btn btn-outline-light"><i class="bi bi-plus-lg"></i></button>
+            <button type="button" id="z_min" class="btn btn-outline-light"><i class="bi bi-dash-lg"></i></button>
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <div id="frame_back" style="position: absolute; top: 15px; right: 15px;">
+            <a class="btn btn-warning" href="{% url 'user_dashboard' %}" role="button">Back to Dashboard</a>
+        </div>
+    </div>
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <p id="dev_hid" hidden>{{ dev_hid }}</p>
+
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    <div class="" style="width: 100%; position: absolute; top: 82%;">
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <div id="frame_info" class="container d-flex flex-row flex-wrap justify-content-center align-items-center w-100 p-2 border-bottom border-danger border-opacity-25" style="">
+            <div class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Last Heartbit</h4>
+                <span id='hb_insert_time'><i class='bi bi-heart-pulse-fill'></i> {{ hb_insert_time }}</span>
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Last GPS Data</h4>
+                <span id='gps_insert_time'><i class='bi bi-geo-alt-fill'></i> {{ gps_insert_time }}</span>
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div id="gps_hb_acc" class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Engine</h4>
+
+                {% if gps_acc == '0' or gps_acc == 0 or hb_acc == '0' or hb_acc == 0 %}
+                    <span class="text-secondary"><i class="bi bi-lightbulb-off-fill"></i> OFF</span>
+                {% elif hb_acc == '1' or hb_acc == 1 %}
+                    <span class="text-danger"><i class="bi bi-lightbulb-fill"></i> ON</span>
+                {% elif gps_acc == '?' or hb_acc == '?' %}
+                    <span class="text-muted"><i class="bi bi-lightbulb-off-fill"></i> ??</span>
+                {% endif %}
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div id="gps_speed" class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Speed</h4>
+
+                {% if hb_acc == '0' or hb_acc == 0 %}
+                    <span class="text-secondary"><i class="bi bi-speedometer"></i> 0 Kmh</span>
+                {% elif hb_acc == '1' or hb_acc == 1 %}
+                    <span class="text-primary"><i class="bi bi-speedometer"></i> {{ gps_speed }} Kmh</span>
+                {% elif hb_acc == '?' %}
+                    <span class="text-muted"><i class="bi bi-speedometer"></i> ??</span>
+                {% endif %}
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div id="hb_charge" class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Battery</h4>
+
+                {% if hb_charge == '0' or hb_charge == 0 %}
+                    <span class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Not Charging</span>
+                {% elif hb_charge == '1' or hb_charge == 1 %}
+                    <span class="text-success"><i class="bi bi-battery-charging"></i> Charging</span>
+                {% endif %}
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div id="hb_built_in_bat_level" class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Level</h4>
+
+                {% if hb_built_in_bat_level == '00' %}
+                    <span class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-battery"></i> Empty</span>
+                {% elif hb_built_in_bat_level == '01' %}
+                    <span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-battery"></i> Extremely Low</span>
+                {% elif hb_built_in_bat_level == '02' %}
+                    <span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-battery-half"></i> Very Low</span>
+                {% elif hb_built_in_bat_level == '03' %}
+                    <span class="text-info"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-battery-half"></i> Low</span>
+                {% elif hb_built_in_bat_level == '04' %}
+                    <span class="text-primary"><i class="bi bi-battery-half"></i> Medium</span>
+                {% elif hb_built_in_bat_level == '05' %}
+                    <span class="text-success"><i class="bi bi-battery-half"></i> High</span>
+                {% elif hb_built_in_bat_level == '06' %}
+                    <span class="text-success"><i class="bi bi-battery-full"></i> Full</span>
+                {% endif %}
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div id="hb_gsm_signal_strength" class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Network</h4>
+
+                {% if hb_gsm_signal_strength == '00' %}
+                    <span class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-reception-0"></i> No Network</span>
+                {% elif hb_gsm_signal_strength == '01' %}
+                    <span class="text-warning"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-reception-1"></i> Extremely Weak</span>
+                {% elif hb_gsm_signal_strength == '02' %}
+                    <span class="text-warning"><i class="bi bi-reception-2"></i> Weak</span>
+                {% elif hb_gsm_signal_strength == '03' %}
+                    <span class="text-primary"><i class="bi bi-reception-3"></i> Good</span>
+                {% elif hb_gsm_signal_strength == '04' %}
+                    <span class="text-success"><i class="bi bi-reception-4"></i> Strong</span>
+                {% elif hb_gsm_signal_strength == '?' %}
+                    <span class="text-muted"><i class="bi bi-reception-4"></i> ??</span>
+                {% endif %}
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div id="gps_positioned_status" class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">GPS</h4>
+
+                {% if gps_positioned_status == '0' or gps_positioned_status == 0 %}
+                    <span class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> <i class="bi bi-pin-map-fill"></i> No GPS</span>
+                {% elif gps_positioned_status == '1' or gps_positioned_status == 1 %}
+                    <span class="text-success"><i class="bi bi-pin-map-fill"></i> OK</span>
+                {% elif gps_positioned_status == '?' %}
+                    <span class="text-muted"><i class="bi bi-pin-map-fill"></i> ??</span>
+                {% endif %}
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <div class="alert alert-secondary m-2 p-2" style="text-align: center;">
+                <h4 class="mt-0">Satellite</h4>
+                <span><i class="bi bi-broadcast"></i> <span id='gps_no_of_satellite'>{{ gps_no_of_satellite }}</span></span>
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+{#        <div id="frame_photo" class="container d-flex flex-column justify-content-center align-items-center w-100 p-2" style="">#}
+{#            <div class="my-2 p-2">#}
+{#                <img class="d-inline-block img-fluid img-thumbnail" style="width: 400px;" src="/media/inside_images/car_01/01.jpg" alt="Photo" />#}
+{#            </div>#}
+{##}
+{#            <div class="my-2 p-2">#}
+{#                <button type="button" class="btn btn-success">Take New Photo</button>#}
+{#            </div>#}
+{#        </div>#}
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+{#        <div id="frame_footer" class="container-fluid bg-success text-light p-3 d-flex flex-row flex-nowrap justify-content-evenly align-items-center w-100" style="">#}
+{#            <div class="">#}
+{#                <h4>Contacts</h4>#}
+{#                <hr>#}
+{#                <h6>Pi Labs BD Ltd</h6>#}
+{#                <h6>Motijheel, Dhaka</h6>#}
+{#            </div>#}
+{##}
+{#            <div class="">#}
+{#                <h4>Services</h4>#}
+{#                <hr>#}
+{#                <h6>Vehicle Tracking</h6>#}
+{#                <h6>Research and Development</h6>#}
+{#            </div>#}
+{##}
+{#            <div class="">#}
+{#                <h4>Team Members</h4>#}
+{#                <hr>#}
+{#                <h6>Head of R&D</h6>#}
+{#                <h6>Head of Departments</h6>#}
+{#            </div>#}
+{#        </div>#}
+    </div>
+    <!-- ------------------------------------------------------------------------------------------------------------------- -->
+{% endblock %}
+<!-- ------------------------------------------------------------------------------------------------------------------- -->

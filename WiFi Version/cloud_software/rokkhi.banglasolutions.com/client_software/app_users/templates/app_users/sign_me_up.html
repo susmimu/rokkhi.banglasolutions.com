@@ -1,0 +1,58 @@
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% extends 'app_users/base.html' %}
+{% load static %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% block sign_up_in_contents %}
+    <div class="d-flex flex-row flex-wrap justify-content-center align-items-center">
+        <div class="container bg-white p-5 mt-5 rounded-3 shadow-sm" style="max-width: 550px;">
+            <form method="POST" action={% url 'sign_me_up' %}>
+                {% csrf_token %}
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3 border-bottom">
+                    <h5 class="text-muted text-center"><b>SIGNUP</b></h5>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3">
+                    {{ sign_me_up_form.username }}
+                    <label for="id_username">Mobile no</label>
+                    <p class="p-0 m-0 text-muted"><small>* Valid mobile number only.</small></p>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3">
+                    {{ sign_me_up_form.email }}
+                    <label for="id_email">Email address</label>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3">
+                    {{ sign_me_up_form.password1 }}
+                    <label for="id_password1">Password</label>
+                    <p class="p-0 m-0 text-muted"><small>* Your password can’t be too similar to your other personal information.</small></p>
+                    <p class="p-0 m-0 text-muted"><small>* Your password must contain at least 8 characters.</small></p>
+                    <p class="p-0 m-0 text-muted"><small>* Your password can’t be a commonly used password.</small></p>
+                    <p class="p-0 m-0 text-muted"><small>* Your password can’t be entirely numeric.</small></p>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-3">
+                    {{ sign_me_up_form.password2 }}
+                    <label for="id_password2">Confirm password</label>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating my-4">
+                    <div class="d-grid gap-2 mx-auto">
+                        <button type="submit" class="btn btn-danger btn-lg btn-block rounded-3">Create account</button>
+                    </div>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+                <div class="form-floating mb-0">
+                    <span class="text-muted small">Already have an account? <a href="{% url 'sign_me_in' %}" class="w3-text-green" style="text-decoration: none;"><b>Login</b></a></span>
+                    <span class="text-muted small">Back to home? <a href="/" class="w3-text-red" style="text-decoration: none;"><b>Cancel</b></a></span>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            </form>
+        </div>
+    </div>
+{% endblock %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->

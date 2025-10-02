@@ -1,0 +1,4 @@
+01. "micropython_v1.21.0_camera_no_ble.bin"
+*** This version Support PSRAM
+Firmware Link: https://github.com/lemariva/micropython-camera-driver/tree/master
+

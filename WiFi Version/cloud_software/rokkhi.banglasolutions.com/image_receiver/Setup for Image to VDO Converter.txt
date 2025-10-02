@@ -1,0 +1,25 @@
+User: just
+Pass: @T8f9mX92c2(499m
+
+
+Convert MJPEG to MP4
+====================
+sudo apt update
+sudo apt install ffmpeg -y
+
+which ffmpeg
+ffmpeg -version
+
+
+
+ffmpeg -i input.mjpeg -c:v libx264 -preset veryfast -crf 23 output.mp4
+
+Explanation of Flags:
+-i input.mjpeg: Your MJPEG file.
+-c:v libx264: Use H.264 video codec (standard for MP4).
+-preset veryfast: Controls encoding speed (can be ultrafast, medium, etc.).
+-crf 23: Constant Rate Factor (lower = better quality, bigger file).
+
+
+
+

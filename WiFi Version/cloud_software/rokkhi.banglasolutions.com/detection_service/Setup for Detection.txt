@@ -1,0 +1,87 @@
+IP: 192.168.1.101
+User: hasan
+Pass: T8f9mX92c2
+
+
+✅ Step-by-Step Ultralytics YOLO Installation
+
+Update System
+sudo apt update && sudo apt upgrade -y
+
+
+Install Python & pip
+python3 --version
+
+
+Install pip and venv:
+sudo apt install python3-pip python3-venv -y
+
+
+Create a Virtual Environment (Optional but Recommended)
+python3 -m venv yolo-env
+source yolo-env/bin/activate
+
+
+Upgrade pip
+pip install --upgrade pip
+
+Install Ultralytics
+pip install ultralytics
+
+
+Check if it’s installed correctly:
+
+cd /home/hasan/rokkhi.banglasolutions.com/image_receiver/
+source yolo-env/bin/activate
+
+yolo help
+
+
+This should display the YOLO CLI tool options.
+
+
+IF ERROR: 
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+sudo apt update
+sudo apt install -y libgl1
+
+
+🔁 Then Try Again:
+
+yolo help
+OR
+yolo predict model=yolov8n.pt source='https://ultralytics.com/images/bus.jpg'
+
+
+
+FINALLY RUN The Python File:
+============================
+cd /home/hasan/rokkhi.banglasolutions.com/image_receiver/
+source yolo-env/bin/activate
+python3 main.py
+
+
+
+
+Convert MJPEG to MP4
+====================
+sudo apt update
+sudo apt install ffmpeg -y
+
+which ffmpeg
+ffmpeg -version
+
+
+
+ffmpeg -i input.mjpeg -c:v libx264 -preset veryfast -crf 23 output.mp4
+
+Explanation of Flags:
+-i input.mjpeg: Your MJPEG file.
+-c:v libx264: Use H.264 video codec (standard for MP4).
+-preset veryfast: Controls encoding speed (can be ultrafast, medium, etc.).
+-crf 23: Constant Rate Factor (lower = better quality, bigger file).
+
+
+
+

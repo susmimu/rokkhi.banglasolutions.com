@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+    <head>
+        {% load static %}
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static '/css_js/bootstrap-5.3.3-dist/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static '/css_js/w3s/w3_css_4_15.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static '/css_js/bootstrap-icons-1.11.3/font/bootstrap-icons.css' %}">
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Kalam" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+        <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Play'>
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Amaranth'>
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Archivo Black'>
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Sevillana'>
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Moon Dance'>
+        <!-- ------------------------------------------------------------------------------------------------------- -->
+        <title>zOs</title>
+        <link rel="shortcut icon" type="image/png" href="{% static 'static_images/zos_logo.png' %}" />
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <style>
+
+        </style>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+    </head>
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+
+
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+    <body class="bg-light" style="z-index: 999;">
+        <!-- Alert here -------------------------------------------------------------------------------------------- -->
+        <div class="container-fluid">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>{{ message.tags }}</strong> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% elif message.tags == 'info' %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <strong>{{ message.tags }}</strong> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% elif message.tags == 'warning' %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>{{ message.tags }}</strong> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% elif message.tags == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ message.tags }}</strong> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------- -->
+
+
+        <!-- ------------------------------------------------------------------------------------------------------- -->
+        <div class="container-fluid">
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            {% block middle_body %}
+
+            {% endblock %}
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------- -->
+
+
+        <!-- JS START *************************************************************************************************** -->
+        <!-- jQuery first -->
+        <script src="{% static '/css_js/jquery/jquery-3.7.1.js' %}" type="text/javascript"></script>
+        <!-- Then Other.js -->
+        <script src="{% static '/css_js/w3s/w3_js_1_04.js' %}" type="text/javascript"></script>
+        <!-- Then Bootstrap JS -->
+        <script src="{% static '/css_js/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <script>
+            $(function() {$('[data-toggle="tooltip"]').tooltip()})
+        </script>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+{#        <script>#}
+{#            document.addEventListener("contextmenu", (e) => {e.preventDefault();}, false);#}
+{#        </script>#}
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+{#        <script>#}
+{#            document.addEventListener("keydown", (e) => {#}
+{#                // USE THIS TO DISABLE CONTROL AND ALL FUNCTION KEYS#}
+{#                // if (e.ctrlKey || (e.keyCode>=112 && e.keyCode<=123)) {#}
+{#                // THIS WILL ONLY DISABLE CONTROL AND F12#}
+{#                if (e.ctrlKey || e.keyCode==123) {#}
+{#                    e.stopPropagation();#}
+{#                    e.preventDefault();#}
+{#                }#}
+{#            });#}
+{#        </script>#}
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <script>
+            $('#work_mode_id').on('change', function()
+            {
+                if ($(this).val() === 'schedule')
+                {
+                    $('#start_time_div_id').show('fast');
+                     $('#end_time_div_id').show('fast');
+                }
+                else
+                {
+                    $('#start_time_div_id').hide('fast');
+                    $('#end_time_div_id').hide('fast');
+                }
+            });
+        </script>
+        <!-- ------------------------------------------------------------------------------------------------------------------- -->
+        <!-- JS END *************************************************************************************************** -->
+    </body>
+</html>

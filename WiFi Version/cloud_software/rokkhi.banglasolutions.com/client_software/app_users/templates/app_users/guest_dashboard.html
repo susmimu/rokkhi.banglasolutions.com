@@ -1,0 +1,178 @@
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% extends 'app_users/base.html' %}
+{% load static %}
+{% load to_and %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- ------------------------------------------------------------------------------------------------------- -->
+{% block middle_body %}
+    <!-- Top Bar Start ------------------------------------------------------------------------------------------------------- -->
+    <div class="container-fluid bg-light w-100 border-bottom fixed-top" style="height: 60px;">
+        <div class="d-flex flex-row justify-content-around flex-wrap pt-3">
+            <div style="background-image: url({% static '/static_images/zos_logo.png' %}); width: 100px; height: 30px; background-position: center; background-repeat: no-repeat; background-size: cover; position: relative; transform: rotate(0deg);">
+                <a href="{% url 'user_dashboard' %}">
+                    <div style="width: 100px; height: 30px; position: relative;"></div>
+                </a>
+{#                <img style="max-width: 100px;" src="{% static '/static_images/lsit_logo.png' %}" alt="Prohori" class="d-inline-block align-top img-fluid" />#}
+            </div>
+
+            <div class="">
+                <h3 class="text-primary" style="text-align: center; font-family: Play;">{{ request.user|upper }}'s Dashboard</h3>
+{#                <h3 class="text-danger" style="text-align: center; font-family: Play;">!!! Meter: 19186790 is running in Reverse Order !!!</h3>#}
+            </div>
+
+            <div class="" style="font-family: Kalam;">
+                <div class="dropdown">
+                    <a class="dropdown-toggle text-muted" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; cursor: pointer">
+                        {% if request.user.profile.avatar %}
+                            <img class="w3-circle" src="{{ request.user.profile.avatar.url }}" alt="{{ request.user }}" style="height: 33px;">
+                            {{ request.user }}
+                        {% else %}
+                            <img class="w3-circle" src="{% static '/static_images/anonymous_user.png' %}" alt="UserPhoto" style="height: 33px;">
+                            {{ request.user }}
+                        {% endif %}
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end mt-3 rounded-1" aria-labelledby="dropdownMenuButton1">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'sign_me_out' %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </li>
+
+{#                        <li>#}
+{#                            <a class="dropdown-item" href="{% url 'change_my_photo' %}">#}
+{#                                <i class="bi bi-camera"></i>#}
+{#                                Change Photo#}
+{#                            </a>#}
+{#                        </li>#}
+
+{#                        <li>#}
+{#                            <a class="dropdown-item" href="{% url 'change_my_password' %}">#}
+{#                                <i class="bi bi-key"></i>#}
+{#                                Change Password#}
+{#                            </a>#}
+{#                        </li>#}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Top Bar End ------------------------------------------------------------------------------------------------------- -->
+
+
+    <!-- Middle Start ------------------------------------------------------------------------------------------------------- -->
+    <div class="container-fluid table-responsive" style="margin-top: 80px;">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Meter No.</th>
+                    <th scope="col">Account No.</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">HB At</th>
+                    <th scope="col">Full Img</th>
+                    <th scope="col">Read At</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in last_img %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+
+                        <td class="text-primary">
+                            <a href="{% url 'single_meter_log' item.device_info_id.dev_sl %}">
+                                {{ item.device_info_id.cust_meter_no }}
+                            </a>
+                        </td>
+
+                        <td>{{ item.device_info_id.cust_acc_no }}</td>
+
+                        <td>
+                            {{ item.device_info_id.cust_name }}
+                            <br>
+                            {{ item.device_info_id.remark }}
+                            <br>
+                            {{ item.device_info_id.dev_sl }}
+                        </td>
+
+                        <td>{{ item.device_info_id.cust_addr }}</td>
+{#                        <td>{{item.device_info_id.dev_name}}</td>#}
+{#                        <td>Otto</td>#}
+{#                        <td>{{item.device_info_id.dev_sl}}</td>#}
+{#                        <td>{{item.device_info_id.dev_sl}}</td>#}
+
+                        {% for item2 in last_hb %}
+                            {% if item2.device_info_id.dev_sl == item.device_info_id.dev_sl %}
+                                <td>{{item2.hb_time}}</td>
+{#                                <td class="text-primary">{{item2.hb_time|date:'d/m/Y H:m:s'}}</td>#}
+                            {% endif %}
+                        {% endfor %}
+
+                        <td><img style="max-width: 250px;" src="{{ item.image_path.url}}" alt="Photo" class="d-inline-block align-top img-fluid" /></td>
+                        <td>{{item.insert_date_time}}</td>
+                        <td class="text-primary"><h3 style="font-family: Play;">{{ item.meter_reading }}</h3></td>
+
+                        <td class="text-success">
+                            {% if item.device_info_id.dev_sl == '000003' %}
+                            	<h5 style="font-family: Play;">{{ meter_000003_status }}</h5>
+                            {% elif item.device_info_id.dev_sl == '000004' %}
+                            	<h5 style="font-family: Play;">{{ meter_000004_status }}</h5>
+                            {% elif item.device_info_id.dev_sl == '000005' %}
+                            	<h5 style="font-family: Play;">{{ meter_000005_status }}</h5>
+                            {% elif item.device_info_id.dev_sl == '000006' %}
+                            	<h5 style="font-family: Play;">{{ meter_000006_status }}</h5>
+                            {% elif item.device_info_id.dev_sl == '000007' %}
+                            	<h5 style="font-family: Play;">{{ meter_000007_status }}</h5>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+{#    <div class="container border-bottom p-2" style="margin-top: 100px;">#}
+{#        {% for item in distinct_values %}#}
+{#            <div class="d-flex flex-row mb-3 justify-content-around align-items-center flex-wrap border-bottom">#}
+{#                <div class="p-2"><h3 style="font-family: Play;">{{ forloop.counter }}</h3></div>#}
+{#                <div class="p-2"><h3 style="font-family: Play;">{{ dev_sl_for_this_user }}</h3></div>#}
+{#                <div class="p-2"><img style="max-width: 250px;" src="/media{{ item.image_path }}" alt="Photo" class="d-inline-block align-top img-fluid m-2" /></div>#}
+{#                <div class="p-2 text-primary"><h4 style="font-family: Play;">{{ item.insert_date_time }}</h4></div>#}
+{#                <div class="p-2 text-danger"><h2 style="font-family: Play;">{{ item.meter_reading }}</h2></div>#}
+{#                <div class="p-2 text-info"><h5 style="font-family: Play;">Last HB: {{ last_hb }}</h5></div>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    </div>#}
+    <!-- Middle End ------------------------------------------------------------------------------------------------------- -->
+
+
+    <!-- Bottom Bar Start --------------------------------------------------------------------------------------------------------------- -->
+    <div class="w-100 container pb-5 z-3" style="height: 80px;">
+        <div class="d-flex flex-row justify-content-around flex-wrap overflow-auto text-muted pt-2" style="font-size: small;">
+            <div class="">Copyright © {{ current_year }} <span class="text-success">RTCL</span><span class="text-danger"></span><span class="text-success"></span><span class="text-primary"> </span>. All rights reserved.</div>
+
+            <div class="d-flex flex-row justify-content-center flex-wrap overflow-auto text-muted">
+                <div class="px-1 w3-hover-text-dark-gray"><a href="#" style="text-decoration: none;">Privacy Policy</a></div>
+                <div class="px-1">|</div>
+                <div class="px-1 w3-hover-text-dark-gray"><a href="#" style="text-decoration: none;">Terms of Use</a></div>
+                <div class="px-1">|</div>
+                <div class="px-1 w3-hover-text-dark-gray"><a href="#" style="text-decoration: none;">Legal</a></div>
+                <div class="px-1">|</div>
+                <div class="px-1 w3-hover-text-dark-gray"><a href="#" style="text-decoration: none;">Site Map</a></div>
+            </div>
+
+            <div>Bangladesh</div>
+        </div>
+    </div>
+    <!-- Bottom Bar End ------------------------------------------------------------------------------------------------------- -->
+{% endblock %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->

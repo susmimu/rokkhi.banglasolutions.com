@@ -1,0 +1,96 @@
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+{% extends 'app_users/base.html' %}
+{% load static %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- ------------------------------------------------------------------------------------------------------- -->
+{% block middle_body %}
+    <!-- Top Bar Start ------------------------------------------------------------------------------------------------------- -->
+    <div class="container-fluid w-100 shadow-sm bg-light" style="height: 55px;">
+        <div class="d-flex flex-row justify-content-around flex-wrap pt-3">
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <a href="{% url 'user_dashboard' %}">
+                <img style="width: 33px; height: 33px;" src="{% static '/static_images/zos_logo.png' %}" alt="zOs" class="d-inline-block align-top img-fluid" />
+            </a>
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <div class="" style="font-family: Kalam;">
+                <div class="dropdown">
+                    <a class="dropdown-toggle text-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; cursor: pointer">
+                        {% if request.user.profile.avatar %}
+                            <img class="w3-circle" src="{{ request.user.profile.avatar.url }}" alt="{{ request.user }}" style="width: 33px; height: 33px;">
+                            {{ request.user }}
+                        {% else %}
+                            <img class="w3-circle" src="{% static '/static_images/anonymous_user.png' %}" alt="UserPhoto" style="width: 33px; height: 33px;">
+                            {{ request.user }}
+                        {% endif %}
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end mt-3 rounded-1 text-success" aria-labelledby="dropdownMenuButton1">
+                        <li>
+                            <a class="dropdown-item text-success" href="{% url 'sign_me_out' %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item text-success" href="{% url 'change_my_photo' %}">
+                                <i class="bi bi-camera"></i>
+                                Change Photo
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item text-success" href="{% url 'change_my_password' %}">
+                                <i class="bi bi-key"></i>
+                                Change Password
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Top Bar End ------------------------------------------------------------------------------------------------------- -->
+
+
+    <!-- Middle Start ------------------------------------------------------------------------------------------------------- -->
+    <div class="d-flex flex-row justify-content-center flex-nowrap mt-3">
+        <form method="POST" action={% url 'change_working_mode' dev_sl %}>
+            {% csrf_token %}
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <select name="work_mode" id="work_mode_id" required class="form-select form-select w-100" aria-label="Large select example">
+                <option value="x" selected>Select Mode</option>
+                <option value="schedule">Schedule</option>
+                <option value="always on">Always ON</option>
+                <option value="manual">Manual</option>
+                <option value="disable">Disable</option>
+            </select>
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <div class="input-group mt-3" id="start_time_div_id" style="display: none;">
+                <span class="input-group-text" id="start_time_id">Start Time</span>
+                <input type="time" name="start_time" class="form-control" placeholder="Start Time" aria-label="Start Time" aria-describedby="basic-addon1">
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <div class="input-group mt-3" id="end_time_div_id" style="display: none;">
+                <span class="input-group-text" id="end_time_id">End Time</span>
+                <input type="time" name="end_time" class="form-control" placeholder="End Time" aria-label="End Time" aria-describedby="basic-addon1">
+            </div>
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <input type="hidden" id="dev_sl_id" name="dev_sl" value="{{ dev_sl }}">
+            <!-- ------------------------------------------------------------------------------------------------------- -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success mt-4" style="align-items: center;"><i class="bi bi-save"></i> Save</button>
+            </div>
+        </form>
+    </div>
+    <!-- Middle End ------------------------------------------------------------------------------------------------------- -->
+
+
+    <!-- Bottom Bar Start --------------------------------------------------------------------------------------------------------------- -->
+
+
+    <!-- Bottom Bar End ------------------------------------------------------------------------------------------------------- -->
+{% endblock %}
+<!-- --------------------------------------------------------------------------------------------------------------- -->
