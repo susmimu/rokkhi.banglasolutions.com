@@ -248,11 +248,7 @@ def start_main_program():
                         # -----------------------------------------------------------------------------------------------
                         print("alert_email:", alert_email)
                     # -----------------------------------------------------------------------------------------------
-                    if alert_row_id == 'NO_PENDING':
-                        print("No Alert Call Pending :)")
-                        sleep(1)
-                    # -----------------------------------------------------------------------------------------------
-                    else:
+                    if alert_row_id:
                         # Generate Call OR SMS
                         for number in phone_list:
                             if number:
@@ -264,6 +260,10 @@ def start_main_program():
                         if send_flag_to_server_and_wait_for_reply(call_done_pkt):
                             if DEBUG:
                                 print("Call done and informed Server Success!")
+                    # -----------------------------------------------------------------------------------------------
+                    else:
+                        print("No Alert Call Pending :)")
+                        sleep(1)
             # -----------------------------------------------------------------------------------------------
             except Exception as e:
                 print('e:while True:', e)

@@ -51,6 +51,7 @@ class ClientThread(Thread):
         self.data = None
     # ***********************************************************************************************
 
+
     # ***********************************************************************************************
     def run(self):
         global thread_counter
@@ -62,6 +63,9 @@ class ClientThread(Thread):
         # -----------------------------------------------------------------------------------------------
         # Infinite Loop
         while True:
+            # -----------------------------------------------------------------------------------------------
+            sleep(1)
+            # -----------------------------------------------------------------------------------------------
             try:
                 # ===============================================================================================
                 self.data = self.client_socket.recv(256)
@@ -84,20 +88,46 @@ class ClientThread(Thread):
                 elif self.data == 'gIveAlRTdatA':
                     print('"Calling Device" asked for PENDING Alert Data!')
                     # -----------------------------------------------------------------------------------------------
-
-
+                    alert_row_id, is_motion_found, is_person_found, dev_sl, dev_name, dev_alert_type, dev_alert_cause, alert_number, alert_email = self.read_alert_call_parameters()
                     # -----------------------------------------------------------------------------------------------
-                    alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email = self.read_alert_call_parameters()
-                    print('alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email:', alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email)
-
+                    print('alert_row_id:', alert_row_id)
+                    print('is_motion_found:', is_motion_found)
+                    print('is_person_found:', is_person_found)
+                    print('dev_sl:', dev_sl)
+                    print('dev_name:', dev_name)
+                    print('dev_alert_type:', dev_alert_type)
+                    print('dev_alert_cause:', dev_alert_cause)
+                    print('alert_number:', alert_number)
+                    print('alert_email:', alert_email)
+                    # -----------------------------------------------------------------------------------------------
                     if alert_row_id and dev_sl and dev_name and dev_alert_type and alert_number:
-                        reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
-                        print('reply_packet:', reply_packet)
+                        if dev_alert_cause == 'motion' and is_motion_found:
+                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            print('reply_packet:', reply_packet)
+                            self.client_socket.send(reply_packet.encode())
                         # -----------------------------------------------------------------------------------------------
-                        self.client_socket.send(reply_packet.encode())
+                        elif dev_alert_cause == 'person' and is_person_found:
+                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            print('reply_packet:', reply_packet)
+                            self.client_socket.send(reply_packet.encode())
+                        # -----------------------------------------------------------------------------------------------
+                        elif dev_alert_cause == 'm_or_p' and (is_motion_found or is_person_found):
+                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            print('reply_packet:', reply_packet)
+                            self.client_socket.send(reply_packet.encode())
+                        # -----------------------------------------------------------------------------------------------
+                        elif dev_alert_cause == 'm_and_p' and (is_motion_found and is_person_found):
+                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            print('reply_packet:', reply_packet)
+                            self.client_socket.send(reply_packet.encode())
+                        # -----------------------------------------------------------------------------------------------
+                        else:
+                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            print('reply_packet:', reply_packet)
+                            self.client_socket.send(reply_packet.encode())
                     # -----------------------------------------------------------------------------------------------
                     else:
-                        reply_packet = f"{self.data}-NO_PENDING-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                        reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
                         print('reply_packet:', reply_packet)
                         self.client_socket.send(reply_packet.encode())
                 # -----------------------------------------------------------------------------------------------
@@ -122,7 +152,7 @@ class ClientThread(Thread):
     def read_alert_call_parameters(self):
         # -----------------------------------------------------------------------------------------------
         cur, conn, result = False, '', ''
-        alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email = '', '', '', '', '', ''
+        alert_row_id, is_motion_found, is_person_found, dev_sl, dev_name, dev_alert_type, dev_alert_cause, alert_number, alert_email = '', '', '', '', '', '', '', '', ''
         # -----------------------------------------------------------------------------------------------
         try:
             conn = sqlite3.connect(db_path)
@@ -131,9 +161,12 @@ class ClientThread(Thread):
             cur.execute("""
             SELECT 
             m.id AS alert_row_id,
+            m.is_motion_found,
+            m.is_person_found,
             d.dev_sl,
             d.dev_name,
             d.dev_alert_type,
+            d.dev_alert_cause,
             d.alert_number,
             d.alert_email
             FROM 
@@ -144,9 +177,10 @@ class ClientThread(Thread):
             m.device_info_id_id = d.id
             WHERE 
             m.is_detection_applied = TRUE 
-            AND m.is_person_found = TRUE 
-            AND m.is_alert_done = FALSE
-            AND m.is_alert_snooze = FALSE
+            AND 
+            m.is_alert_done = FALSE 
+            AND 
+            m.is_alert_snooze = FALSE
             ORDER BY m.id ASC
             LIMIT 1;
             """)
@@ -156,11 +190,14 @@ class ClientThread(Thread):
             # -----------------------------------------------------------------------------------------------
             if no_of_rows:
                 alert_row_id = no_of_rows[0]
-                dev_sl = no_of_rows[1]
-                dev_name = no_of_rows[2]
-                dev_alert_type = no_of_rows[3]
-                alert_number = no_of_rows[4]
-                alert_email = no_of_rows[5]
+                is_motion_found = no_of_rows[1]
+                is_person_found = no_of_rows[2]
+                dev_sl = no_of_rows[3]
+                dev_name = no_of_rows[4]
+                dev_alert_type = no_of_rows[5]
+                dev_alert_cause = no_of_rows[6]
+                alert_number = no_of_rows[7]
+                alert_email = no_of_rows[8]
         # -----------------------------------------------------------------------------------------------
         except Exception as e:
             print('e1:read_alert_call_parameters:', e)
@@ -172,7 +209,7 @@ class ClientThread(Thread):
             except Exception as e:
                 print('e2:read_alert_call_parameters:', e)
         # -----------------------------------------------------------------------------------------------
-        return alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email
+        return alert_row_id, is_motion_found, is_person_found, dev_sl, dev_name, dev_alert_type, dev_alert_cause, alert_number, alert_email
     # ***********************************************************************************************
 
 
