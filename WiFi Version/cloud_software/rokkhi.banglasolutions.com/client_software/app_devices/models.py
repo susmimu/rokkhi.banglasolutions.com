@@ -70,6 +70,9 @@ class DeviceInfo(models.Model):
     ALERT_TYPE = (('call', 'Call'), ('sms', 'SMS'), ('email', 'Email'), ('all', 'All'), ('off', 'Off'))
     dev_alert_type = models.CharField(max_length=30, choices=ALERT_TYPE, default='call', verbose_name='Alert Type')
 
+    ALERT_CAUSE = (('motion', 'Motion'), ('person', 'Person'), ('m_or_p', 'Motion Or Person'), ('m_and_p', 'Motion & Person'))
+    dev_alert_cause = models.CharField(max_length=30, choices=ALERT_CAUSE, default='m_or_p', verbose_name='Alert Cause')
+
     alert_number = models.CharField(max_length=100, blank=True, null=True, verbose_name='Alert Number')
     alert_email = models.CharField(max_length=200, blank=True, null=True, verbose_name='Alert Email')
 

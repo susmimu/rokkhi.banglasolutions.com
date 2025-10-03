@@ -84,6 +84,9 @@ class ClientThread(Thread):
                 elif self.data == 'gIveAlRTdatA':
                     print('"Calling Device" asked for PENDING Alert Data!')
                     # -----------------------------------------------------------------------------------------------
+
+
+                    # -----------------------------------------------------------------------------------------------
                     alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email = self.read_alert_call_parameters()
                     print('alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email:', alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email)
 

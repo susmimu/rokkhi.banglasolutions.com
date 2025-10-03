@@ -10,14 +10,14 @@ class DeviceInfoAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------
     list_display = [
         'dev_sl', 'dev_user', 'dev_name', 'dev_ver', 'esp_mac', 'active', 'dev_active_mode',
-        'dev_active_hour_start', 'dev_active_hour_end', 'dev_alert_type', 'change_pending',
+        'dev_active_hour_start', 'dev_active_hour_end', 'dev_alert_type', 'dev_alert_cause', 'change_pending',
         'alert_number', 'alert_email', 'snooze_delay', 'busy_status', 'remark',]
 
     list_display_links = ['dev_sl']
 
     list_editable = [
         'dev_active_mode', 'dev_active_hour_start', 'dev_active_hour_end',
-        'dev_alert_type', 'change_pending', 'alert_number', 'alert_email', 'snooze_delay', 'busy_status',]
+        'dev_alert_type', 'dev_alert_cause', 'change_pending', 'alert_number', 'alert_email', 'snooze_delay', 'busy_status',]
 
     list_filter = ['dev_ver', 'active']
     search_fields = ['dev_sl']
