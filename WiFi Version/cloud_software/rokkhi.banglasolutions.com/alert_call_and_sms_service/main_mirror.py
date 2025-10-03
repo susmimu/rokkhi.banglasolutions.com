@@ -99,6 +99,7 @@ class ClientThread(Thread):
                     print('dev_alert_cause:', dev_alert_cause)
                     print('alert_number:', alert_number)
                     print('alert_email:', alert_email)
+                    print('---------------------------------------------------------------')
                     # -----------------------------------------------------------------------------------------------
                     if alert_row_id and dev_sl and dev_name and dev_alert_type and alert_number:
                         if dev_alert_cause == 'motion' and is_motion_found:
@@ -122,12 +123,12 @@ class ClientThread(Thread):
                             self.client_socket.send(reply_packet.encode())
                         # -----------------------------------------------------------------------------------------------
                         else:
-                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            reply_packet = f"{self.data}------"
                             print('reply_packet:', reply_packet)
                             self.client_socket.send(reply_packet.encode())
                     # -----------------------------------------------------------------------------------------------
                     else:
-                        reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                        reply_packet = f"{self.data}------"
                         print('reply_packet:', reply_packet)
                         self.client_socket.send(reply_packet.encode())
                 # -----------------------------------------------------------------------------------------------
