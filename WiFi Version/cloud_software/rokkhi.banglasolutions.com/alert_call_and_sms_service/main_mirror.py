@@ -49,6 +49,7 @@ class ClientThread(Thread):
         self.address = address
         self.timeout = timeout
         self.data = None
+        self.dev_sl = ''
     # ***********************************************************************************************
 
 
@@ -88,12 +89,12 @@ class ClientThread(Thread):
                 elif self.data == 'gIveAlRTdatA':
                     print('"Calling Device" asked for PENDING Alert Data!')
                     # -----------------------------------------------------------------------------------------------
-                    alert_row_id, is_motion_found, is_person_found, dev_sl, dev_name, dev_alert_type, dev_alert_cause, alert_number, alert_email = self.read_alert_call_parameters()
+                    alert_row_id, is_motion_found, is_person_found, self.dev_sl, dev_name, dev_alert_type, dev_alert_cause, alert_number, alert_email = self.read_alert_call_parameters()
                     # -----------------------------------------------------------------------------------------------
                     print('alert_row_id:', alert_row_id)
                     print('is_motion_found:', is_motion_found)
                     print('is_person_found:', is_person_found)
-                    print('dev_sl:', dev_sl)
+                    print('self.dev_sl:', self.dev_sl)
                     print('dev_name:', dev_name)
                     print('dev_alert_type:', dev_alert_type)
                     print('dev_alert_cause:', dev_alert_cause)
@@ -101,24 +102,24 @@ class ClientThread(Thread):
                     print('alert_email:', alert_email)
                     print('---------------------------------------------------------------')
                     # -----------------------------------------------------------------------------------------------
-                    if alert_row_id and dev_sl and dev_name and dev_alert_type and alert_number:
+                    if alert_row_id and self.dev_sl and dev_name and dev_alert_type and alert_number:
                         if dev_alert_cause == 'motion' and is_motion_found:
-                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            reply_packet = f"{self.data}-{alert_row_id}-{self.dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
                             print('reply_packet:', reply_packet)
                             self.client_socket.send(reply_packet.encode())
                         # -----------------------------------------------------------------------------------------------
                         elif dev_alert_cause == 'person' and is_person_found:
-                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            reply_packet = f"{self.data}-{alert_row_id}-{self.dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
                             print('reply_packet:', reply_packet)
                             self.client_socket.send(reply_packet.encode())
                         # -----------------------------------------------------------------------------------------------
                         elif dev_alert_cause == 'm_or_p' and (is_motion_found or is_person_found):
-                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            reply_packet = f"{self.data}-{alert_row_id}-{self.dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
                             print('reply_packet:', reply_packet)
                             self.client_socket.send(reply_packet.encode())
                         # -----------------------------------------------------------------------------------------------
                         elif dev_alert_cause == 'm_and_p' and (is_motion_found and is_person_found):
-                            reply_packet = f"{self.data}-{alert_row_id}-{dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
+                            reply_packet = f"{self.data}-{alert_row_id}-{self.dev_sl}-{dev_name}-{dev_alert_type}-{alert_number}-{alert_email}"
                             print('reply_packet:', reply_packet)
                             self.client_socket.send(reply_packet.encode())
                         # -----------------------------------------------------------------------------------------------
@@ -141,8 +142,14 @@ class ClientThread(Thread):
                     if self.update_alert_status(row_id_done):
                         print('Alert Call Status Update Success :)\nInforming Client...')
                         self.client_socket.send(self.data.encode())
+                        # -----------------------------------------------------------------------------------------------
+                        # NEED to Set a Flag for ALL PREVIOUS Entries Otherwise When User change the "dev_alert_cause"
+                        # Previous Alert Call will generate now.
+                        self.set_all_previous_unsnooz_entries_to_snooze()
+                    # -----------------------------------------------------------------------------------------------
                     else:
                         print('Alert Call Status Update FAILED!')
+                    # -----------------------------------------------------------------------------------------------
             # ===============================================================================================
             except Exception as e:
                 print('e:Exception in Main While Loop', e)
@@ -182,7 +189,7 @@ class ClientThread(Thread):
             m.is_alert_done = FALSE 
             AND 
             m.is_alert_snooze = FALSE
-            ORDER BY m.id ASC
+            ORDER BY m.id DESC 
             LIMIT 1;
             """)
             # -----------------------------------------------------------------------------------------------
@@ -246,6 +253,40 @@ class ClientThread(Thread):
                 print('e2:update_alert_status:', e)
         # -----------------------------------------------------------------------------------------------
         return result
+    # ***********************************************************************************************
+
+
+    # ***********************************************************************************************
+    def set_all_previous_unsnooz_entries_to_snooze(self):
+        # -----------------------------------------------------------------------------------------------
+        cur, conn = False, ''
+        # -----------------------------------------------------------------------------------------------
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            # -----------------------------------------------------------------------------------------------
+            cur.execute("""
+            UPDATE app_devices_motionvideofromdevice 
+            SET 
+            is_alert_snooze = ? 
+            WHERE 
+            device_info_id_id = (SELECT id FROM app_devices_deviceinfo WHERE dev_sl = ?)
+            AND is_alert_snooze = ? 
+            """, (True, self.dev_sl, False))
+            # -----------------------------------------------------------------------------------------------
+            conn.commit()
+            print('set_all_previous_unsnooz_entries_to_snooze SUCCESS!!!!!!!', self.dev_sl)
+        # -----------------------------------------------------------------------------------------------
+        except Exception as e:
+            print('e1:set_all_previous_unsnooz_entries_to_snooze:', e)
+            conn.rollback()
+        # -----------------------------------------------------------------------------------------------
+        finally:
+            try:
+                cur.close()
+                conn.close()
+            except Exception as e:
+                print('e2:set_all_previous_unsnooz_entries_to_snooze:', e)
     # ***********************************************************************************************
 
 
