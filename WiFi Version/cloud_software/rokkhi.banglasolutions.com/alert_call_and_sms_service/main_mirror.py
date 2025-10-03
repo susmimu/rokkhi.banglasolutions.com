@@ -36,7 +36,7 @@ HOST_PORT = 9473
 thread_counter = 0
 # Create a list in which threads will be stored in order to be joined later
 client_thread_list = []
-DEFAULT_TIMEOUT = 180
+DEFAULT_TIMEOUT = 300
 # -----------------------------------------------------------------------------------------------
 
 

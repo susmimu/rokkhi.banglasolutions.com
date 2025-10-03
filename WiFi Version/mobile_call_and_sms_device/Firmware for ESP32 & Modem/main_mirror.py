@@ -31,11 +31,11 @@ reply_buff = ''
 SOCKET_TIMEOUT = 45
 # -----------------------------------------------------------------------------------------------
 hb_counter = 0
-hb_delay = 9
+hb_delay = 15
 # -----------------------------------------------------------------------------------------------
 DEBUG = True
 # -----------------------------------------------------------------------------------------------
-wdt = WDT(timeout=60000)  # Enable it with a timeout of 60 seconds
+wdt = WDT(timeout=180000)  # Enable it with a timeout of 180 seconds
 # -----------------------------------------------------------------------------------------------
 
 
@@ -257,7 +257,7 @@ def start_main_program():
                         for number in phone_list:
                             if number:
                                 modem_mgnt.call_to_a_mobile_no(number)
-                                sleep(10)
+                                sleep(5)
                         # -----------------------------------------------------------------------------------------------
                         call_done_pkt = f"caLLdOnE,{alert_row_id}"
                         # Inform Server and Reset Status

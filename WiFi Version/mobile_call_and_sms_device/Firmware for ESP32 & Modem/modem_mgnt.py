@@ -285,12 +285,12 @@ def call_to_a_mobile_no(cell_no):
         if DEBUG_NETWORK:
             print('Call Started...')
         # -----------------------------------------------------------------------------------------------
-        sleep(20)
+        sleep(25)
         uart_mgnt.write_to_uart2("ATH\r\n")
 
         if DEBUG_NETWORK:
             print('Call Ended...')
-        sleep(5)
+        # sleep(5)
     except Exception as e:
         if DEBUG_AT:
             print('e:call_to_a_mobile_no:', e)
