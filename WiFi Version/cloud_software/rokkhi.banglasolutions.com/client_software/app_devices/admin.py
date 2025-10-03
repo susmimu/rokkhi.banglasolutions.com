@@ -509,7 +509,7 @@ class ImageResolutionListAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------
     list_display = ['cmd_visual', 'cmd', 'active']
     list_display_links = ['cmd_visual']
-    list_editable = ['active']
+    list_editable = ['cmd', 'active']
     # ------------------------------------------------------------------------------
     list_per_page = 15
     list_max_show_all = 15
