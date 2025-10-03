@@ -48,16 +48,15 @@ class ClientThread(Thread):
         self.client_socket = client_socket
         self.address = address
         self.timeout = timeout
+        self.data = None
     # ***********************************************************************************************
 
     # ***********************************************************************************************
     def run(self):
         global thread_counter
         # -----------------------------------------------------------------------------------------------
-        # Device Login Part
-        print('New Device Connected :)')
         thread_counter += 1
-        print('New Thread CREATED\nTotal running thread(s): ', thread_counter)
+        print('New Device Connected!\nNew Thread CREATED\nTotal running thread(s): ', thread_counter)
         # -----------------------------------------------------------------------------------------------
 
         # -----------------------------------------------------------------------------------------------
@@ -102,10 +101,10 @@ class ClientThread(Thread):
                 elif 'caLLdOnE' in self.data:
                     print('Alert Call Status Updating...')
                     reply_buff_list = self.data.split(",")
-                    row_id = reply_buff_list[1]
-                    print('row_id:', row_id)
+                    row_id_done = reply_buff_list[1]
+                    print('row_id_done:', row_id_done)
                     # -----------------------------------------------------------------------------------------------
-                    if self.update_alert_status(self, row_id):
+                    if self.update_alert_status(row_id_done):
                         print('Alert Call Status Update Success :)\nInforming Client...')
                         self.client_socket.send(self.data.encode())
                     else:
@@ -117,8 +116,7 @@ class ClientThread(Thread):
 
 
     # ***********************************************************************************************
-    @staticmethod
-    def read_alert_call_parameters():
+    def read_alert_call_parameters(self):
         # -----------------------------------------------------------------------------------------------
         cur, conn, result = False, '', ''
         alert_row_id, dev_sl, dev_name, dev_alert_type, alert_number, alert_email = '', '', '', '', '', ''
@@ -176,8 +174,7 @@ class ClientThread(Thread):
 
 
     # ***********************************************************************************************
-    @staticmethod
-    def update_alert_status(self, row_id):
+    def update_alert_status(self, row_id_done):
         # -----------------------------------------------------------------------------------------------
         cur, conn, result = False, '', ''
         # -----------------------------------------------------------------------------------------------
@@ -191,7 +188,7 @@ class ClientThread(Thread):
                 is_alert_done = ? 
                 WHERE 
                 id = ? 
-                """, (True, row_id))
+                """, (True, row_id_done))
             # -----------------------------------------------------------------------------------------------
             conn.commit()
             result = True
